@@ -1,13 +1,27 @@
-import { Link, useForm, Head } from '@inertiajs/react';
-import classNames from 'classnames';
-import React from 'react';
+import FormProvider from '@/Components/Form/FormProvider';
+import RHFTextField from '@/Components/Form/RHFTextField';
+import { Iconify } from '@/Components/Icons';
+import RouterLink from '@/Components/RouterLink';
+import { useBoolean } from '@/Hooks/useBoolean';
 import useRoute from '@/Hooks/useRoute';
-import AuthenticationCard from '@/Components/AuthenticationCard';
-import Checkbox from '@/Components/Checkbox';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import InputError from '@/Components/InputError';
+import useTypedPageErrors from '@/Hooks/useTypedPageErrors';
+import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { routes } from '@/routes';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Head, router } from '@inertiajs/react';
+import LoadingButton from '@mui/lab/LoadingButton';
+import {
+  Alert,
+  Box,
+  IconButton,
+  InputAdornment,
+  Link,
+  Stack,
+  Typography,
+} from '@mui/material';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 interface Props {
   canResetPassword: boolean;
@@ -16,102 +30,140 @@ interface Props {
 
 export default function Login({ canResetPassword, status }: Props) {
   const route = useRoute();
-  const form = useForm({
-    email: '',
-    password: '',
-    remember: '',
+
+  const password = useBoolean();
+
+  const errors = useTypedPageErrors();
+
+  const LoginSchema = Yup.object().shape({
+    email: Yup.string()
+      .required('Email is required')
+      .email('Email must be a valid email address'),
+    password: Yup.string().required('Password is required'),
   });
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    form.post(route('login'), {
-      onFinish: () => form.reset('password'),
-    });
-  }
+  const defaultValues = {
+    email: '',
+    password: '',
+    remember: false,
+  };
 
-  return (
-    <AuthenticationCard>
-      <Head title="Login" />
+  const methods = useForm({
+    resolver: yupResolver(LoginSchema),
+    defaultValues,
+  });
 
-      {status && (
-        <div className="mb-4 font-medium text-sm text-green-600">
-          {status}
-        </div>
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const onSubmit = handleSubmit(async data => {
+    try {
+      await router.post(route('login'), {
+        ...data,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  const renderHead = (
+    <Stack spacing={2} sx={{ mb: 5 }} alignItems="center">
+      <Typography variant="h3">Sign In</Typography>
+
+      <Stack direction="row" spacing={0.5} justifyContent="center">
+        <Typography variant="body1">Not a member?</Typography>
+
+        <Link
+          component={RouterLink}
+          href={route(routes.auth.register)}
+          variant="subtitle1"
+        >
+          Create an account
+        </Link>
+      </Stack>
+    </Stack>
+  );
+
+  const renderForm = (
+    <Stack spacing={2.5}>
+      {!!errors.length &&
+        errors.map((msg: string, key: number) => (
+          <Alert severity="error" key={key}>
+            {msg}
+          </Alert>
+        ))}
+
+      <RHFTextField name="email" label="Email address" />
+
+      <RHFTextField
+        name="password"
+        label="Password"
+        type={password.value ? 'text' : 'password'}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton onClick={password.onToggle} edge="end">
+                <Iconify
+                  icon={
+                    password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'
+                  }
+                />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+
+      {canResetPassword && (
+        <Link
+          component={RouterLink}
+          href={route(routes.auth.forgotPassword)}
+          variant="body2"
+          color="inherit"
+          underline="always"
+          sx={{ alignSelf: 'flex-end' }}
+        >
+          Forgot password?
+        </Link>
       )}
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <TextInput
-            id="email"
-            type="email"
-            className="mt-1 block w-full"
-            value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
-            required
-            autoFocus
-          />
-          <InputError className="mt-2" message={form.errors.email} />
-        </div>
+      <LoadingButton
+        fullWidth
+        color="inherit"
+        size="large"
+        type="submit"
+        variant="contained"
+        loading={isSubmitting}
+      >
+        Login
+      </LoadingButton>
+    </Stack>
+  );
 
-        <div className="mt-4">
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <TextInput
-            id="password"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password}
-            onChange={e => form.setData('password', e.currentTarget.value)}
-            required
-            autoComplete="current-password"
-          />
-          <InputError className="mt-2" message={form.errors.password} />
-        </div>
+  return (
+    <AuthLayout>
+      <Head title="Login" />
 
-        <div className="mt-4">
-          <label className="flex items-center">
-            <Checkbox
-              name="remember"
-              checked={form.data.remember === 'on'}
-              onChange={e =>
-                form.setData('remember', e.currentTarget.checked ? 'on' : '')
-              }
-            />
-            <span className="ml-2 text-sm text-gray-600">
-              Remember me
-            </span>
-          </label>
-        </div>
+      <Box sx={{ my: 'auto', width: 350 }}>
+        <FormProvider methods={methods} onSubmit={onSubmit}>
+          {renderHead}
 
-        <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0 mt-4">
-          {canResetPassword && (
-            <div>
-              <Link
-                href={route('password.request')}
-                className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Forgot your password?
-              </Link>
-            </div>
+          {!!status && (
+            <Alert severity="success" sx={{ mb: 3 }}>
+              {status}
+            </Alert>
           )}
 
-          <div className="flex items-center justify-end">
-            <Link
-              href={route('register')}
-              className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Need an account?
-            </Link>
+          <Alert severity="info" sx={{ mb: 3 }}>
+            Use email : <strong>test@example.com</strong> / password :
+            <strong> password</strong>
+          </Alert>
 
-            <PrimaryButton
-              className={classNames('ml-4', { 'opacity-25': form.processing })}
-              disabled={form.processing}
-            >
-              Log in
-            </PrimaryButton>
-          </div>
-        </div>
-      </form>
-    </AuthenticationCard>
+          {renderForm}
+        </FormProvider>
+      </Box>
+    </AuthLayout>
   );
 }

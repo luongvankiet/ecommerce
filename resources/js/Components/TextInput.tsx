@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef } from 'react';
 
+// eslint-disable-next-line react/display-name
 const TextInput = forwardRef<
   HTMLInputElement,
   React.DetailedHTMLProps<

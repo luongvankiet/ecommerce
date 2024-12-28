@@ -1,60 +1,103 @@
-import { useForm, Head } from '@inertiajs/react';
-import classNames from 'classnames';
-import React from 'react';
+import FormProvider from '@/Components/Form/FormProvider';
+import RHFTextField from '@/Components/Form/RHFTextField';
+import { Iconify, PasswordIcon } from '@/Components/Icons';
+import { useBoolean } from '@/Hooks/useBoolean';
 import useRoute from '@/Hooks/useRoute';
-import AuthenticationCard from '@/Components/AuthenticationCard';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+import useTypedPageErrors from '@/Hooks/useTypedPageErrors';
+import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Head, router } from '@inertiajs/react';
+import LoadingButton from '@mui/lab/LoadingButton';
+import {
+  Alert,
+  Box,
+  IconButton,
+  InputAdornment,
+  Stack,
+  Typography,
+} from '@mui/material';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 export default function ConfirmPassword() {
+  const errors = useTypedPageErrors();
+
   const route = useRoute();
-  const form = useForm({
-    password: '',
+
+  const password = useBoolean();
+
+  const ConfirmPasswordSchema = Yup.object().shape({
+    password: Yup.string().required('Password is required'),
   });
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    form.post(route('password.confirm'), {
-      onFinish: () => form.reset(),
-    });
-  }
+  const methods = useForm({
+    resolver: yupResolver(ConfirmPasswordSchema),
+    defaultValues: { password: '' },
+  });
+
+  const onSubmit = methods.handleSubmit(data => {
+    router.post(route('password.confirm'), data);
+  });
 
   return (
-    <AuthenticationCard>
+    <AuthLayout>
       <Head title="Secure Area" />
 
-      <div className="mb-4 text-sm text-gray-600">
-        This is a secure area of the application. Please confirm your password
-        before continuing.
-      </div>
+      <Box sx={{ my: 'auto' }}>
+        <Stack spacing={3} alignItems="center" sx={{ mb: 3 }}>
+          <PasswordIcon sx={{ height: 96 }} />
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <TextInput
-            id="password"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password}
-            onChange={e => form.setData('password', e.currentTarget.value)}
-            required
-            autoComplete="current-password"
-            autoFocus
-          />
-          <InputError className="mt-2" message={form.errors.password} />
-        </div>
+          <Typography variant="h3">Confirm password</Typography>
 
-        <div className="flex justify-end mt-4">
-          <PrimaryButton
-            className={classNames('ml-4', { 'opacity-25': form.processing })}
-            disabled={form.processing}
-          >
-            Confirm
-          </PrimaryButton>
-        </div>
-      </form>
-    </AuthenticationCard>
+          <Typography variant="body1">
+            This is a secure area of the application. Please confirm your
+            password before continuing.
+          </Typography>
+        </Stack>
+
+        <FormProvider methods={methods} onSubmit={onSubmit}>
+          <Stack spacing={3}>
+            {!!errors.length &&
+              errors.map((msg: string, key: number) => (
+                <Alert severity="error" key={key}>
+                  {msg}
+                </Alert>
+              ))}
+
+            <RHFTextField
+              name="password"
+              label="Password"
+              type={password.value ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={password.onToggle} edge="end">
+                      <Iconify
+                        icon={
+                          password.value
+                            ? 'solar:eye-bold'
+                            : 'solar:eye-closed-bold'
+                        }
+                      />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            <LoadingButton
+              fullWidth
+              color="inherit"
+              size="large"
+              type="submit"
+              variant="contained"
+            >
+              Confirm
+            </LoadingButton>
+          </Stack>
+        </FormProvider>
+      </Box>
+    </AuthLayout>
   );
 }

@@ -1,9 +1,11 @@
-import { Link, useForm, Head } from '@inertiajs/react';
-import classNames from 'classnames';
-import React from 'react';
+import EmailInboxIcon from '@/Components/Icons/EmailInboxIcon';
+import RouterLink from '@/Components/RouterLink';
 import useRoute from '@/Hooks/useRoute';
-import AuthenticationCard from '@/Components/AuthenticationCard';
-import PrimaryButton from '@/Components/PrimaryButton';
+import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { Head, useForm } from '@inertiajs/react';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { Alert, Box, Button, Stack, Typography } from '@mui/material';
+import React from 'react';
 
 interface Props {
   status: string;
@@ -20,50 +22,57 @@ export default function VerifyEmail({ status }: Props) {
   }
 
   return (
-    <AuthenticationCard>
+    <AuthLayout>
       <Head title="Email Verification" />
 
-      <div className="mb-4 text-sm text-gray-600">
-        Before continuing, could you verify your email address by clicking on
-        the link we just emailed to you? If you didn't receive the email, we
-        will gladly send you another.
-      </div>
+      <Box sx={{ my: 'auto' }}>
+        <Stack spacing={2} alignItems="center" sx={{ mb: 5 }}>
+          <EmailInboxIcon sx={{ height: 96 }} />
 
-      {verificationLinkSent && (
-        <div className="mb-4 font-medium text-sm text-green-600">
-          A new verification link has been sent to the email address you
-          provided during registration.
-        </div>
-      )}
+          <Typography variant="h3">Verify Email</Typography>
 
-      <form onSubmit={onSubmit}>
-        <div className="mt-4 flex items-center justify-between">
-          <PrimaryButton
-            className={classNames({ 'opacity-25': form.processing })}
-            disabled={form.processing}
-          >
-            Resend Verification Email
-          </PrimaryButton>
+          <Typography variant="body1">
+            Before continuing, could you verify your email address by clicking
+            on the link we just emailed to you? If you didn&apos;t receive the
+            email, we will gladly send you another.
+          </Typography>
 
-          <div>
-            <Link
-              href={route('profile.show')}
-              className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          {!!verificationLinkSent && (
+            <Alert severity="success">
+              A new verification link has been sent to your email address.
+            </Alert>
+          )}
+        </Stack>
+
+        <form onSubmit={onSubmit}>
+          <Stack direction="row" spacing={2}>
+            <LoadingButton
+              color="inherit"
+              size="large"
+              fullWidth
+              type="submit"
+              variant="contained"
+              loading={form.processing}
+              sx={{ textWrap: 'nowrap', px: 10 }}
             >
-              Edit Profile
-            </Link>
-          </div>
+              Resend Verification Email
+            </LoadingButton>
 
-          <Link
-            href={route('logout')}
-            method="post"
-            as="button"
-            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-2"
-          >
-            Log Out
-          </Link>
-        </div>
-      </form>
-    </AuthenticationCard>
+            <Button
+              component={RouterLink}
+              color="inherit"
+              size="large"
+              fullWidth
+              type="submit"
+              variant="soft"
+              href={route('logout')}
+              method="post"
+            >
+              Logout
+            </Button>
+          </Stack>
+        </form>
+      </Box>
+    </AuthLayout>
   );
 }

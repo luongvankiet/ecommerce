@@ -1,153 +1,199 @@
-import { Link, useForm, Head } from '@inertiajs/react';
-import classNames from 'classnames';
-import React from 'react';
+import FormProvider from '@/Components/Form/FormProvider';
+import RHFTextField from '@/Components/Form/RHFTextField';
+import { Iconify } from '@/Components/Icons';
+import RouterLink from '@/Components/RouterLink';
+import { useBoolean } from '@/Hooks/useBoolean';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
-import AuthenticationCard from '@/Components/AuthenticationCard';
-import Checkbox from '@/Components/Checkbox';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import InputError from '@/Components/InputError';
+import { routes } from '@/routes';
+import { yupResolver } from '@hookform/resolvers/yup';
+import LoadingButton from '@mui/lab/LoadingButton';
+import {
+  Alert,
+  IconButton,
+  InputAdornment,
+  List,
+  ListItemText,
+  Stack,
+  Typography,
+  Link,
+} from '@mui/material';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { Head, router } from '@inertiajs/react';
 
 export default function Register() {
   const page = useTypedPage();
   const route = useRoute();
-  const form = useForm({
+
+  const password = useBoolean();
+
+  const RegisterSchema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    email: Yup.string()
+      .required('Email is required')
+      .email('Email must be a valid email address'),
+    password: Yup.string().required('Password is required'),
+    password_confirmation: Yup.string()
+      .required('Password is required')
+      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+  });
+
+  const defaultValues = {
     name: '',
     email: '',
     password: '',
     password_confirmation: '',
-    terms: false,
+  };
+
+  const methods = useForm({
+    resolver: yupResolver(RegisterSchema),
+    defaultValues,
   });
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    form.post(route('register'), {
-      onFinish: () => form.reset('password', 'password_confirmation'),
-    });
-  }
+  const {
+    reset,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
 
-  return (
-    <AuthenticationCard>
-      <Head title="Register" />
+  const onSubmit = handleSubmit(async data => {
+    try {
+      await router.post(route('register'), {
+        ...data,
+        onFinish: () => reset('password', 'password_confirmation'),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <InputLabel htmlFor="name">Name</InputLabel>
-          <TextInput
-            id="name"
-            type="text"
-            className="mt-1 block w-full"
-            value={form.data.name}
-            onChange={e => form.setData('name', e.currentTarget.value)}
-            required
-            autoFocus
-            autoComplete="name"
-          />
-          <InputError className="mt-2" message={form.errors.name} />
-        </div>
+  const renderHead = (
+    <Stack spacing={2} sx={{ mb: 5 }} alignItems="center">
+      <Typography variant="h3">Create New Account</Typography>
 
-        <div className="mt-4">
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <TextInput
-            id="email"
-            type="email"
-            className="mt-1 block w-full"
-            value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
-            required
-          />
-          <InputError className="mt-2" message={form.errors.email} />
-        </div>
+      <Stack direction="row" spacing={0.5}>
+        <Typography variant="body1">Already have an account?</Typography>
 
-        <div className="mt-4">
-          <InputLabel htmlFor="password">Password</InputLabel>
-          <TextInput
-            id="password"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password}
-            onChange={e => form.setData('password', e.currentTarget.value)}
-            required
-            autoComplete="new-password"
-          />
-          <InputError className="mt-2" message={form.errors.password} />
-        </div>
+        <Link
+          component={RouterLink}
+          href={route(routes.auth.login)}
+          variant="subtitle1"
+        >
+          Sign in
+        </Link>
+      </Stack>
+    </Stack>
+  );
 
-        <div className="mt-4">
-          <InputLabel htmlFor="password_confirmation">
-            Confirm Password
-          </InputLabel>
-          <TextInput
-            id="password_confirmation"
-            type="password"
-            className="mt-1 block w-full"
-            value={form.data.password_confirmation}
-            onChange={e =>
-              form.setData('password_confirmation', e.currentTarget.value)
-            }
-            required
-            autoComplete="new-password"
-          />
-          <InputError
-            className="mt-2"
-            message={form.errors.password_confirmation}
-          />
-        </div>
+  const renderTerms = (
+    <Typography
+      component="div"
+      sx={{
+        color: 'text.secondary',
+        mt: 2.5,
+        typography: 'caption',
+        textAlign: 'center',
+      }}
+    >
+      {'By signing up, I agree to '}
+      <Link underline="always" color="text.primary">
+        Terms of Service
+      </Link>
+      {' and '}
+      <Link underline="always" color="text.primary">
+        Privacy Policy
+      </Link>
+      .
+    </Typography>
+  );
 
-        {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (
-          <div className="mt-4">
-            <InputLabel htmlFor="terms">
-              <div className="flex items-center">
-                <Checkbox
-                  name="terms"
-                  id="terms"
-                  checked={form.data.terms}
-                  onChange={e => form.setData('terms', e.currentTarget.checked)}
-                  required
-                />
-
-                <div className="ml-2">
-                  I agree to the
-                  <a
-                    target="_blank"
-                    href={route('terms.show')}
-                    className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Terms of Service
-                  </a>
-                  and
-                  <a
-                    target="_blank"
-                    href={route('policy.show')}
-                    className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Privacy Policy
-                  </a>
-                </div>
-              </div>
-              <InputError className="mt-2" message={form.errors.terms} />
-            </InputLabel>
-          </div>
+  const renderForm = (
+    <FormProvider methods={methods} onSubmit={onSubmit}>
+      <Stack spacing={2.5}>
+        {!!page.errors && (
+          <Alert severity="error">
+            <List component="div" disablePadding>
+              {Object.values(page.errors).map((msg: string, key: number) => (
+                <ListItemText key={key} primary={msg} />
+              ))}
+            </List>
+          </Alert>
         )}
 
-        <div className="flex items-center justify-end mt-4">
-          <Link
-            href={route('login')}
-            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Already registered?
-          </Link>
+        <RHFTextField name="name" label="Name" />
 
-          <PrimaryButton
-            className={classNames('ml-4', { 'opacity-25': form.processing })}
-            disabled={form.processing}
-          >
-            Register
-          </PrimaryButton>
-        </div>
-      </form>
-    </AuthenticationCard>
+        <RHFTextField name="email" label="Email address" />
+
+        <RHFTextField
+          name="password"
+          label="Password"
+          type={password.value ? 'text' : 'password'}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={password.onToggle} edge="end">
+                  <Iconify
+                    icon={
+                      password.value
+                        ? 'solar:eye-bold'
+                        : 'solar:eye-closed-bold'
+                    }
+                  />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <RHFTextField
+          name="password_confirmation"
+          label="Confirm Password"
+          type={password.value ? 'text' : 'password'}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={password.onToggle} edge="end">
+                  <Iconify
+                    icon={
+                      password.value
+                        ? 'solar:eye-bold'
+                        : 'solar:eye-closed-bold'
+                    }
+                  />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <LoadingButton
+          fullWidth
+          color="inherit"
+          size="large"
+          type="submit"
+          variant="contained"
+          loading={isSubmitting}
+        >
+          Create account
+        </LoadingButton>
+      </Stack>
+    </FormProvider>
+  );
+
+  return (
+    <>
+      <AuthLayout>
+        <Head title="Register" />
+
+        {renderHead}
+
+        {renderForm}
+
+        {page.props.jetstream.hasTermsAndPrivacyPolicyFeature && renderTerms}
+      </AuthLayout>
+    </>
   );
 }

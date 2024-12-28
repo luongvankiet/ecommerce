@@ -1,12 +1,16 @@
-import { useForm, Head } from '@inertiajs/react';
-import classNames from 'classnames';
-import React from 'react';
+import FormProvider from '@/Components/Form/FormProvider';
+import RHFTextField from '@/Components/Form/RHFTextField';
+import { PasswordIcon } from '@/Components/Icons';
+import RouterLink from '@/Components/RouterLink';
 import useRoute from '@/Hooks/useRoute';
-import AuthenticationCard from '@/Components/AuthenticationCard';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import InputError from '@/Components/InputError';
+import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Head, router } from '@inertiajs/react';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { Alert, Box, Button, Stack, Typography } from '@mui/material';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
 
 interface Props {
   status: string;
@@ -14,55 +18,85 @@ interface Props {
 
 export default function ForgotPassword({ status }: Props) {
   const route = useRoute();
-  const form = useForm({
-    email: '',
+
+  const ForgotPasswordSchema = Yup.object().shape({
+    email: Yup.string()
+      .email('Email must be a valid email address')
+      .required('Email is required'),
   });
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    form.post(route('password.email'));
-  }
+  const defaultValues = {
+    email: '',
+  };
+
+  const methods = useForm({
+    resolver: yupResolver(ForgotPasswordSchema),
+    defaultValues,
+  });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const onSubmit = handleSubmit(async data => {
+    try {
+      await router.post(route('password.email'), data);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   return (
-    <AuthenticationCard>
+    <AuthLayout>
       <Head title="Forgot Password" />
 
-      <div className="mb-4 text-sm text-gray-600">
-        Forgot your password? No problem. Just let us know your email address
-        and we will email you a password reset link that will allow you to
-        choose a new one.
-      </div>
+      <Box sx={{ my: 'auto' }}>
+        <Stack spacing={3} alignItems="center" sx={{ mb: 3 }}>
+          <PasswordIcon sx={{ height: 96 }} />
 
-      {status && (
-        <div className="mb-4 font-medium text-sm text-green-600">
-          {status}
-        </div>
-      )}
+          <Typography variant="h3">Forgot your password?</Typography>
 
-      <form onSubmit={onSubmit}>
-        <div>
-          <InputLabel htmlFor="email">Email</InputLabel>
-          <TextInput
-            id="email"
-            type="email"
-            className="mt-1 block w-full"
-            value={form.data.email}
-            onChange={e => form.setData('email', e.currentTarget.value)}
-            required
-            autoFocus
-          />
-          <InputError className="mt-2" message={form.errors.email} />
-        </div>
+          <Typography variant="body1">
+            Forgot your password? No problem. Just let us know your email
+            address and we will email you a password reset link that will allow
+            you to choose a new one.
+          </Typography>
 
-        <div className="flex items-center justify-end mt-4">
-          <PrimaryButton
-            className={classNames({ 'opacity-25': form.processing })}
-            disabled={form.processing}
-          >
-            Email Password Reset Link
-          </PrimaryButton>
-        </div>
-      </form>
-    </AuthenticationCard>
+          {status && <Alert severity="success">{status}</Alert>}
+        </Stack>
+
+        <FormProvider methods={methods} onSubmit={onSubmit}>
+          <Stack spacing={3}>
+            <RHFTextField name="email" label="Email address" />
+
+            <Stack direction="row" spacing={2}>
+              <LoadingButton
+                color="inherit"
+                size="large"
+                fullWidth
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+                sx={{ textWrap: 'nowrap', px: 10 }}
+              >
+                Email Password Reset Link
+              </LoadingButton>
+
+              <Button
+                component={RouterLink}
+                color="inherit"
+                size="large"
+                fullWidth
+                variant="soft"
+                href={route('login')}
+              >
+                Sign in
+              </Button>
+            </Stack>
+          </Stack>
+        </FormProvider>
+      </Box>
+    </AuthLayout>
   );
 }
