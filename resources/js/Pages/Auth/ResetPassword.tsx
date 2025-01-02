@@ -7,6 +7,7 @@ import { useBoolean } from '@/Hooks/useBoolean';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPageErrors from '@/Hooks/useTypedPageErrors';
 import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { routes } from '@/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Head, router } from '@inertiajs/react';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -64,7 +65,7 @@ export default function ResetPassword({ token, email }: Props) {
 
   const onSubmit = handleSubmit(async data => {
     try {
-      await router.post(route('password.update'), data);
+      await router.post(route(routes.auth.resetPassword), data);
     } catch (error) {
       console.error(error);
     }

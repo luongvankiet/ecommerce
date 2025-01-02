@@ -4,6 +4,7 @@ import { PasswordIcon } from '@/Components/Icons';
 import RouterLink from '@/Components/RouterLink';
 import useRoute from '@/Hooks/useRoute';
 import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { routes } from '@/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Head, router } from '@inertiajs/react';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -41,7 +42,7 @@ export default function ForgotPassword({ status }: Props) {
 
   const onSubmit = handleSubmit(async data => {
     try {
-      await router.post(route('password.email'), data);
+      await router.post(route(routes.auth.forgotPassword), data);
     } catch (error) {
       console.error(error);
     }

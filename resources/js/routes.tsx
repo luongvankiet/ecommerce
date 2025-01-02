@@ -3,8 +3,11 @@ export const routes = {
     login: 'login',
     register: 'register',
     logout: 'logout',
-    forgotPassword: 'password.request',
+    forgotPassword: 'password.email',
     confirmPassword: 'password.confirm',
+    resetPassword: 'password.update',
+    twoFactorLogin: 'two-factor.login',
+    sendVerification: 'verification.send',
     permissions: {
       index: 'permissions.index',
       check: 'permissions.check',
@@ -12,9 +15,6 @@ export const routes = {
   },
   dashboard: {
     index: 'dashboard',
-    overview: {
-      index: 'dashboard.overview',
-    },
     brands: {
       index: 'dashboard.brands.index',
       create: 'dashboard.brands.create',

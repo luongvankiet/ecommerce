@@ -5,6 +5,7 @@ import { useBoolean } from '@/Hooks/useBoolean';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPageErrors from '@/Hooks/useTypedPageErrors';
 import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { routes } from '@/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Head, router } from '@inertiajs/react';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -37,7 +38,7 @@ export default function ConfirmPassword() {
   });
 
   const onSubmit = methods.handleSubmit(data => {
-    router.post(route('password.confirm'), data);
+    router.post(route(routes.auth.confirmPassword), data);
   });
 
   return (

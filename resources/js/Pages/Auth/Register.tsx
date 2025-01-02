@@ -61,7 +61,7 @@ export default function Register() {
 
   const onSubmit = handleSubmit(async data => {
     try {
-      await router.post(route('register'), {
+      await router.post(route(routes.auth.register), {
         ...data,
         onFinish: () => reset('password', 'password_confirmation'),
       });

@@ -1,6 +1,7 @@
 import { PasswordIcon } from '@/Components/Icons';
 import useRoute from '@/Hooks/useRoute';
 import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { routes } from '@/routes';
 import { Head, useForm } from '@inertiajs/react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Alert, Box, Link, Stack, TextField, Typography } from '@mui/material';
@@ -34,7 +35,7 @@ export default function TwoFactorChallenge() {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    form.post(route('two-factor.login'));
+    form.post(route(routes.auth.twoFactorLogin));
   }
 
   return (
@@ -110,8 +111,9 @@ export default function TwoFactorChallenge() {
             type="submit"
             variant="contained"
             loading={form.processing}
+            sx={{ px: 5 }}
           >
-            Log in
+            Submit
           </LoadingButton>
         </Stack>
       </form>

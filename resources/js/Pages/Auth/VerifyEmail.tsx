@@ -2,6 +2,7 @@ import EmailInboxIcon from '@/Components/Icons/EmailInboxIcon';
 import RouterLink from '@/Components/RouterLink';
 import useRoute from '@/Hooks/useRoute';
 import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import { routes } from '@/routes';
 import { Head, useForm } from '@inertiajs/react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { Alert, Box, Button, Stack, Typography } from '@mui/material';
@@ -18,7 +19,7 @@ export default function VerifyEmail({ status }: Props) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    form.post(route('verification.send'));
+    form.post(route(routes.auth.sendVerification));
   }
 
   return (

@@ -60,7 +60,7 @@ export default function Login({ canResetPassword, status }: Props) {
 
   const onSubmit = handleSubmit(async data => {
     try {
-      await router.post(route('login'), {
+      await router.post(route(routes.auth.login), {
         ...data,
       });
     } catch (error) {
