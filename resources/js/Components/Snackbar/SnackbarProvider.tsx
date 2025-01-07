@@ -1,5 +1,4 @@
-import PropTypes from 'prop-types';
-import React, { useRef } from 'react';
+import React, { PropsWithChildren, useRef } from 'react';
 import {
   SnackbarProvider as NotistackProvider,
   closeSnackbar,
@@ -15,7 +14,7 @@ import { StyledIcon, StyledNotistack } from './styles';
 
 // ----------------------------------------------------------------------
 
-export default function SnackbarProvider({ children }) {
+export default function SnackbarProvider({ children }: PropsWithChildren) {
   const settings = useSettingsContext();
 
   const isRTL = settings.themeDirection === 'rtl';
@@ -75,7 +74,3 @@ export default function SnackbarProvider({ children }) {
     </NotistackProvider>
   );
 }
-
-SnackbarProvider.propTypes = {
-  children: PropTypes.node,
-};

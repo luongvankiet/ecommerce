@@ -1,14 +1,20 @@
-import PropTypes from 'prop-types';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, ReactNode } from 'react';
 // icons
 import { Icon } from '@iconify/react';
 // @mui
 import Box from '@mui/material/Box';
+import { CssBaselineProps } from '@mui/material';
 // ----------------------------------------------------------------------
 
+interface IconifyProps {
+  icon: ReactNode;
+  sx: CssBaselineProps;
+  width: number;
+}
+
 const Iconify = forwardRef(function Iconify(
-  { icon, width = 20, sx, ...other },
-  ref
+  { icon, width = 20, sx, ...other }: IconifyProps,
+  ref,
 ) {
   return (
     <Box
@@ -21,11 +27,5 @@ const Iconify = forwardRef(function Iconify(
     />
   );
 });
-
-Iconify.propTypes = {
-  icon: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
-  sx: PropTypes.object,
-  width: PropTypes.number,
-};
 
 export default Iconify;

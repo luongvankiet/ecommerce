@@ -1,12 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 // @mui
 import TextField from '@mui/material/TextField';
 
 // ----------------------------------------------------------------------
 
-export default function RHFTextField({ name, helperText, type, ...other }) {
+interface RHFTextFieldProps {
+  helperText: object;
+  name: string;
+  type: string;
+}
+
+export default function RHFTextField({
+  name,
+  helperText,
+  type,
+  ...other
+}: RHFTextFieldProps) {
   const { control } = useFormContext();
 
   return (
@@ -34,9 +44,3 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
     />
   );
 }
-
-RHFTextField.propTypes = {
-  helperText: PropTypes.object,
-  name: PropTypes.string,
-  type: PropTypes.string,
-};

@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { PropsWithChildren } from 'react';
 import merge from 'lodash/merge';
 import { useMemo } from 'react';
 // @mui
@@ -25,7 +24,7 @@ import RTL, { direction } from './Options/RightToLeft';
 
 // ----------------------------------------------------------------------
 
-export default function ThemeProvider({ children }) {
+export default function ThemeProvider({ children }: PropsWithChildren) {
   const settings = useSettingsContext();
 
   const darkModeOption = darkMode(settings.themeMode);
@@ -89,7 +88,3 @@ export default function ThemeProvider({ children }) {
     </MuiThemeProvider>
   );
 }
-
-ThemeProvider.propTypes = {
-  children: PropTypes.node,
-};

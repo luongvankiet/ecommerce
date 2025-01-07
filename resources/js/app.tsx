@@ -46,6 +46,7 @@ import ThemeProvider from '@/Theme';
 import { SnackbarProvider } from '@/Components/Snackbar';
 import SettingsDrawer from '@/Components/Settings/Drawer';
 import { ProgressBar } from '@/Components/ProgressBar';
+import { MotionLazy } from './Components/Animate/MotionLazy';
 
 const appName =
   window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
@@ -65,7 +66,7 @@ createInertiaApp({
     const root = createRoot(el);
 
     return root.render(
-      <RouteContext.Provider value={(window as any).route}>
+      <RouteContext.Provider value={(window as unknown).route}>
         <SettingsProvider
           defaultSettings={{
             themeMode: 'light', // 'light' | 'dark'
@@ -77,11 +78,13 @@ createInertiaApp({
           }}
         >
           <ThemeProvider>
-            <SnackbarProvider>
-              <SettingsDrawer />
-              <ProgressBar />
-              <App {...props} />
-            </SnackbarProvider>
+            <MotionLazy>
+              <SnackbarProvider>
+                <SettingsDrawer />
+                <ProgressBar />
+                <App {...props} />
+              </SnackbarProvider>
+            </MotionLazy>
           </ThemeProvider>
         </SettingsProvider>
       </RouteContext.Provider>,

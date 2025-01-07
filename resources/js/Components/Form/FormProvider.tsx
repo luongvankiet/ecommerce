@@ -1,19 +1,21 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { FormProvider as Form } from 'react-hook-form';
 
 // ----------------------------------------------------------------------
 
-export default function FormProvider({ children, onSubmit, methods }) {
+interface FormProviderProps {
+  methods: object;
+  onSubmit(): void;
+}
+
+export default function FormProvider({
+  children,
+  onSubmit,
+  methods,
+}: PropsWithChildren<FormProviderProps>) {
   return (
     <Form {...methods}>
       <form onSubmit={onSubmit}>{children}</form>
     </Form>
   );
 }
-
-FormProvider.propTypes = {
-  children: PropTypes.node,
-  methods: PropTypes.object,
-  onSubmit: PropTypes.func,
-};

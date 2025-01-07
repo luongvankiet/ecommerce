@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 // @mui
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -10,7 +9,15 @@ import { Iconify } from '@/Components/Icons';
 
 // ----------------------------------------------------------------------
 
-export default function StretchOptions({ value, onChange }) {
+interface StretchOptionsProps {
+  onChange(): void;
+  value: bool;
+}
+
+export default function StretchOptions({
+  value,
+  onChange,
+}: StretchOptionsProps) {
   return (
     <ButtonBase
       onClick={onChange}
@@ -70,8 +77,3 @@ export default function StretchOptions({ value, onChange }) {
     </ButtonBase>
   );
 }
-
-StretchOptions.propTypes = {
-  onChange: PropTypes.func,
-  value: PropTypes.bool,
-};

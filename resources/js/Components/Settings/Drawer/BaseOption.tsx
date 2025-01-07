@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 // @mui
 import { alpha } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
@@ -9,7 +8,19 @@ import { SvgColor } from '@/Components/Icons';
 
 // ----------------------------------------------------------------------
 
-export default function BaseOptions({ icons, options, value, onChange }) {
+interface BaseOptionsProps {
+  icons: string[];
+  onChange(): void;
+  options: [];
+  value: string;
+}
+
+export default function BaseOptions({
+  icons,
+  options,
+  value,
+  onChange,
+}: BaseOptionsProps) {
   return (
     <Stack direction="row" spacing={2}>
       {options.map((option, index) => {
@@ -54,10 +65,3 @@ export default function BaseOptions({ icons, options, value, onChange }) {
     </Stack>
   );
 }
-
-BaseOptions.propTypes = {
-  icons: PropTypes.arrayOf(PropTypes.string),
-  onChange: PropTypes.func,
-  options: PropTypes.array,
-  value: PropTypes.string,
-};

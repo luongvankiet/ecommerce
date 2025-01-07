@@ -1,23 +1,28 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { Collapse } from '@mui/material';
 import SidebarItem from './SidebarItem';
 import { usePage } from '@inertiajs/react';
 
-const SidebarList = ({ item, depth, config }) => {
+interface SidebarListProps {
+  item: unknown;
+  config: object;
+  depth: number;
+}
+
+const SidebarList = ({ item, depth, config }: SidebarListProps) => {
   const { current_route_name } = usePage().props;
 
   const active = useMemo(
     () =>
       item.path === current_route_name ||
       item.children?.some(
-        (subItem) =>
+        subItem =>
           subItem.path === current_route_name ||
-          subItem.children?.some((i) => i.path === current_route_name)
+          subItem.children?.some(i => i.path === current_route_name),
       ) ||
       false,
-    [current_route_name]
+    [current_route_name],
   );
 
   const externalLink = item.path?.includes('http');
@@ -25,7 +30,7 @@ const SidebarList = ({ item, depth, config }) => {
   const [open, setOpen] = useState(active);
 
   const handleToggle = useCallback(() => {
-    setOpen((prev) => !prev);
+    setOpen(prev => !prev);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -51,7 +56,7 @@ const SidebarList = ({ item, depth, config }) => {
       />
 
       {item.children?.length > 0 &&
-        item.children?.filter((i) => !i.hidden).length > 0 && (
+        item.children?.filter(i => !i.hidden).length > 0 && (
           <Collapse in={open} unmountOnExit>
             {item.children?.map((child, childIndex) => (
               <SidebarList
@@ -65,12 +70,6 @@ const SidebarList = ({ item, depth, config }) => {
         )}
     </>
   );
-};
-
-SidebarList.propTypes = {
-  item: PropTypes.any,
-  config: PropTypes.object,
-  depth: PropTypes.number,
 };
 
 export default SidebarList;

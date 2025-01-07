@@ -1,15 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { memo, forwardRef } from 'react';
+import { memo, forwardRef, PropsWithChildren } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 //
 import { StyledRootScrollbar, StyledScrollbar } from './styles';
+import { CssBaselineProps } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
+interface ScrollbarProps {
+  sx: CssBaselineProps;
+}
+
 const Scrollbar = forwardRef(function Scrollbar(
-  { children, sx, ...other },
+  { children, sx, ...other }: PropsWithChildren<ScrollbarProps>,
   ref,
 ) {
   const userAgent =
@@ -43,10 +47,5 @@ const Scrollbar = forwardRef(function Scrollbar(
     </StyledRootScrollbar>
   );
 });
-
-Scrollbar.propTypes = {
-  children: PropTypes.node,
-  sx: PropTypes.object,
-};
 
 export default memo(Scrollbar);

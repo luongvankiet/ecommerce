@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 // @mui
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -9,7 +8,14 @@ import { primaryPresets } from '@/theme/options/presets';
 
 // ----------------------------------------------------------------------
 
-export default function PresetsOptions({ value, onChange }) {
+interface PresetsOptionsProps {
+  onChange(): void;
+  value: string;
+}
+export default function PresetsOptions({
+  value,
+  onChange,
+}: PresetsOptionsProps) {
   const options = primaryPresets.map(color => ({
     name: color.name,
     value: color.main,
@@ -61,8 +67,3 @@ export default function PresetsOptions({ value, onChange }) {
     </Box>
   );
 }
-
-PresetsOptions.propTypes = {
-  onChange: PropTypes.func,
-  value: PropTypes.string,
-};

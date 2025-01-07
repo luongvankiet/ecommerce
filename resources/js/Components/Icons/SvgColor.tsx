@@ -1,11 +1,19 @@
-import PropTypes from 'prop-types';
 import React, { forwardRef } from 'react';
 // @mui
 import Box from '@mui/material/Box';
+import { CssBaselineProps } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-const SvgColor = forwardRef(function SvgColor({ src, sx, ...other }, ref) {
+interface SvgColorProps {
+  src: string;
+  sx: CssBaselineProps;
+}
+
+const SvgColor = forwardRef(function SvgColor(
+  { src, sx, ...other }: SvgColorProps,
+  ref,
+) {
   return (
     <Box
       component="span"
@@ -24,10 +32,5 @@ const SvgColor = forwardRef(function SvgColor({ src, sx, ...other }, ref) {
     />
   );
 });
-
-SvgColor.propTypes = {
-  src: PropTypes.string,
-  sx: PropTypes.object,
-};
 
 export default SvgColor;

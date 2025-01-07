@@ -1,7 +1,7 @@
 import EmailInboxIcon from '@/Components/Icons/EmailInboxIcon';
 import RouterLink from '@/Components/RouterLink';
 import useRoute from '@/Hooks/useRoute';
-import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import AuthLayout from '@/Layouts/Auth';
 import { routes } from '@/routes';
 import { Head, useForm } from '@inertiajs/react';
 import LoadingButton from '@mui/lab/LoadingButton';

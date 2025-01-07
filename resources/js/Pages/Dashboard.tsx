@@ -1,6 +1,6 @@
 import React from 'react';
 import Welcome from '@/Components/Welcome';
-import DashboardLayout from '@/Layouts/Dashboard/DashboardLayout';
+import DashboardLayout from '@/Layouts/Dashboard';
 
 export default function Dashboard() {
   return (

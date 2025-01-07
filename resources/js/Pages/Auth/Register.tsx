@@ -21,7 +21,7 @@ import {
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
-import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import AuthLayout from '@/Layouts/Auth';
 import { Head, router } from '@inertiajs/react';
 
 export default function Register() {

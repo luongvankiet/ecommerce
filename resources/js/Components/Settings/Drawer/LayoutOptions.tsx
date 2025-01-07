@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 // @mui
 import { alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -8,7 +7,17 @@ import ButtonBase from '@mui/material/ButtonBase';
 
 // ----------------------------------------------------------------------
 
-export default function LayoutOptions({ options, value, onChange }) {
+interface LayoutOptionsProps {
+  onChange(): void;
+  options: array;
+  value: string;
+}
+
+export default function LayoutOptions({
+  options,
+  value,
+  onChange,
+}: LayoutOptionsProps) {
   const theme = useTheme();
 
   const renderNav = (option, selected) => {
@@ -91,7 +100,7 @@ export default function LayoutOptions({ options, value, onChange }) {
     );
   };
 
-  const renderContent = (selected) => (
+  const renderContent = selected => (
     <Box sx={{ p: 0.5, flexGrow: 1, height: 1, width: 1 }}>
       <Box
         sx={{
@@ -111,7 +120,7 @@ export default function LayoutOptions({ options, value, onChange }) {
 
   return (
     <Stack direction="row" spacing={2}>
-      {options.map((option) => {
+      {options.map(option => {
         const selected = value === option;
 
         return (
@@ -130,7 +139,7 @@ export default function LayoutOptions({ options, value, onChange }) {
                   theme.palette.mode === 'light'
                     ? theme.palette.grey[500]
                     : theme.palette.common.black,
-                  0.08
+                  0.08,
                 )}`,
               }),
               ...(option === 'horizontal' && {
@@ -146,9 +155,3 @@ export default function LayoutOptions({ options, value, onChange }) {
     </Stack>
   );
 }
-
-LayoutOptions.propTypes = {
-  onChange: PropTypes.func,
-  options: PropTypes.array,
-  value: PropTypes.string,
-};

@@ -1,13 +1,33 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { PropsWithChildren } from 'react';
 // @mui
 import { menuItemClasses } from '@mui/material/MenuItem';
 import Popover from '@mui/material/Popover';
 //
 import { getPosition } from './utils';
 import { StyledArrow } from './styles';
+import { CssBaselineProps } from '@mui/material';
 
 // ----------------------------------------------------------------------
+
+interface CustomPopoverProps {
+  sx: CssBaselineProps;
+  open: object;
+  hiddenArrow: bool;
+  disabledArrow: bool;
+  arrow:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right'
+    | 'left-top'
+    | 'left-center'
+    | 'left-bottom'
+    | 'right-top'
+    | 'right-center'
+    | 'right-bottom';
+}
 
 export default function CustomPopover({
   open,
@@ -16,7 +36,7 @@ export default function CustomPopover({
   hiddenArrow,
   sx,
   ...other
-}) {
+}: PropsWithChildren<CustomPopoverProps>) {
   const { style, anchorOrigin, transformOrigin } = getPosition(arrow);
 
   return (
@@ -49,25 +69,3 @@ export default function CustomPopover({
     </Popover>
   );
 }
-
-CustomPopover.propTypes = {
-  sx: PropTypes.object,
-  open: PropTypes.object,
-  children: PropTypes.node,
-  hiddenArrow: PropTypes.bool,
-  disabledArrow: PropTypes.bool,
-  arrow: PropTypes.oneOf([
-    'top-left',
-    'top-center',
-    'top-right',
-    'bottom-left',
-    'bottom-center',
-    'bottom-right',
-    'left-top',
-    'left-center',
-    'left-bottom',
-    'right-top',
-    'right-center',
-    'right-bottom',
-  ]),
-};

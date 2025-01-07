@@ -4,7 +4,7 @@ import { Iconify, PasswordIcon } from '@/Components/Icons';
 import { useBoolean } from '@/Hooks/useBoolean';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPageErrors from '@/Hooks/useTypedPageErrors';
-import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import AuthLayout from '@/Layouts/Auth';
 import { routes } from '@/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Head, router } from '@inertiajs/react';

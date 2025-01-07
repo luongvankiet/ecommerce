@@ -3,7 +3,7 @@ import RHFTextField from '@/Components/Form/RHFTextField';
 import { PasswordIcon } from '@/Components/Icons';
 import RouterLink from '@/Components/RouterLink';
 import useRoute from '@/Hooks/useRoute';
-import AuthLayout from '@/Layouts/Auth/AuthLayout';
+import AuthLayout from '@/Layouts/Auth';
 import { routes } from '@/routes';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Head, router } from '@inertiajs/react';
